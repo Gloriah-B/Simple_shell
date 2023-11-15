@@ -38,6 +38,12 @@ int main(void)
 			command[length - 1] = '\0';
 		}
 
+		if (strcmp(command, "exit") == 0)
+		{
+			write(STDOUT_FILENO, "Exiting Gloriah_shell. Goodbye!\n", 31);
+			break;
+		}
+
 		execute_command(command);
 	}
 
@@ -96,6 +102,13 @@ void execute_command(char *command)
 		}
 
 		args[i] = NULL;
+
+		/* Check if the command is "exit" */
+		if (strcmp(args[0], "exit") == 0)
+		{
+			write(STDOUT_FILENO, "Exiting Gloriah_shell. Goodbye!\n", 31);
+			exit(EXIT_SUCCESS);
+		}
 
 		/* Check if the executable is found in the current directory */
 		if (access(args[0], X_OK) == 0)
