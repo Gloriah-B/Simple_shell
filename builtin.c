@@ -33,23 +33,20 @@ bool is_interactive(void)
 int main(void)
 {
 	bool interactive = is_interactive();
+	bool should_print_prompt = true;
 
 	while (1)
 	{
 		char command[MAX_COMMAND_LENGTH];
 		size_t length;
 
-		if (interactive)
+		if (interactive && should_print_prompt)
 		{
 			display_prompt();
 		}
 
 		if (fgets(command, sizeof(command), stdin) == NULL)
 		{
-			if (interactive)
-			{
-				write(STDOUT_FILENO, "\n Exit \n", 6);
-			}
 			break;
 		}
 
@@ -62,10 +59,6 @@ int main(void)
 
 		if (strcmp(command, "exit") == 0)
 		{
-			if (interactive)
-			{
-				write(STDOUT_FILENO, " Exit \n", 6);
-			}
 			break;
 		}
 
@@ -81,11 +74,22 @@ int main(void)
 					write(STDOUT_FILENO, "\n", 1);
 				}
 			}
+			should_print_prompt = true;
 			continue;
 		}
 		if (interactive || command[0] != '\0')
 		{
 			execute_command(command);
+
+			if (interactive)
+			{
+				write(STDOUT_FILENO, "($)\n", 5);
+				should_print_prompt = true;
+			}
+			else
+			{
+				should_print_prompt = false;
+			}
 		}
 	}
 

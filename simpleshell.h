@@ -7,9 +7,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool>
 
 void display_prompt(void);
-void execute_command(char *command);
+void execute_command(char *command, bool should_print_prompt)
 int main(void);
 
 #endif
