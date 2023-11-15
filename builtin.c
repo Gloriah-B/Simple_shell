@@ -40,6 +40,7 @@ int main(void)
 
 		if (strcmp(command, "exit") == 0)
 		{
+			write(STDOUT_FILENO, "Debug: Exiting loop due to exit command\n", 41);
 			write(STDOUT_FILENO, "Exiting Gloriah_shell. Goodbye!\n", 31);
 			break;
 		}
