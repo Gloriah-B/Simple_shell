@@ -4,11 +4,24 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 #define MAX_COMMAND_LENGTH 100
 
 void display_prompt(void);
 void execute_command(char *command);
+
+/**
+ * is_interactive - Check if the shell is running in interactive mode.
+ *
+ * Return:
+ * true if running interactively, false otherwise.
+ */
+bool is_interactive(void)
+{
+	return (isatty(STDIN_FILENO));
+}
+
 /**
  * main - Entry point of the shell.
  *
@@ -16,18 +29,27 @@ void execute_command(char *command);
  * This function serves as the entry point for the simple UNIX command.
  * Return: EXIT_SUCCESS on success, EXIT_FAILURE on failure.
  */
+
 int main(void)
 {
+	bool interactive = is_interactive();
+
 	while (1)
 	{
 		char command[MAX_COMMAND_LENGTH];
 		size_t length;
 
-		display_prompt();
+		if (interactive)
+		{
+			display_prompt();
+		}
 
 		if (fgets(command, sizeof(command), stdin) == NULL)
 		{
-			write(STDOUT_FILENO, "\nExiting Gloriah_shell. Goodbye!\n", 31);
+			if (interactive)
+			{
+				write(STDOUT_FILENO, "\n Exit \n", 6);
+			}
 			break;
 		}
 
@@ -40,8 +62,10 @@ int main(void)
 
 		if (strcmp(command, "exit") == 0)
 		{
-			write(STDOUT_FILENO, "Debug: Exiting loop due to exit command\n", 41);
-			write(STDOUT_FILENO, "Exiting Gloriah_shell. Goodbye!\n", 31);
+			if (interactive)
+			{
+				write(STDOUT_FILENO, " Exit \n", 6);
+			}
 			break;
 		}
 
@@ -51,13 +75,18 @@ int main(void)
 
 			if (env_var != NULL)
 			{
-				write(STDOUT_FILENO, env_var, strlen(env_var));
-				write(STDOUT_FILENO, "\n", 1);
+				if (interactive)
+				{
+					write(STDOUT_FILENO, env_var, strlen(env_var));
+					write(STDOUT_FILENO, "\n", 1);
+				}
 			}
 			continue;
 		}
-
-		execute_command(command);
+		if (interactive || command[0] != '\0')
+		{
+			execute_command(command);
+		}
 	}
 
 	return (EXIT_SUCCESS);
@@ -119,7 +148,7 @@ void execute_command(char *command)
 		/* Check if the command is "exit" */
 		if (strcmp(args[0], "exit") == 0)
 		{
-			write(STDOUT_FILENO, "Exiting Gloriah_shell. Goodbye!\n", 31);
+			write(STDOUT_FILENO, " Exit \n", 6);
 			exit(EXIT_SUCCESS);
 		}
 
